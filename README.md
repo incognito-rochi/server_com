@@ -1,6 +1,5 @@
 server_com
 ==========
-# Fast and Easy Web Server Installation
  
 - Edited By   : Raisul Islam
 - Last Updated: July 2th, 2014
