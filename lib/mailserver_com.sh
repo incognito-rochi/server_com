@@ -1,8 +1,8 @@
 ####################################################################
 # Install properly everything to send emails
-# Author: Coto Augosto C.
-# URL: http://beecoss.com
-# Created: Mar 22, 2010 04:44:42
+# Author: Raisul Islam
+# URL: http://rochi.netii.net
+# Created: July 02, 2014
 ####################################################################
 # to see log file
 # cat /var/log/maillog
@@ -36,12 +36,20 @@ mailServer_com(){
 
 	yum remove -y postfix
 	rm -rf /etc/postfix/
+	
+	####################################################################
+	# Reseting Dovecot
+	####################################################################
+
+	yum remove -y dovecot
+	rm -rf /etc/dovecot/
 
 	####################################################################
-	# Installing postfix
+	# Installing postfix and dovecot
 	####################################################################
 
 	yum install -y postfix
+	yum install -y dovecot dovecot-mysql
 
 	####################################################################
 	# Adding iptables rules for postfix
@@ -49,6 +57,8 @@ mailServer_com(){
 
 	sudo /sbin/iptables -I INPUT -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
 	sudo /sbin/iptables -I OUTPUT -p tcp --sport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
+	sudo /sbin/iptables -I INPUT -p tcp --dport 143 -m state --state NEW,ESTABLISHED -j ACCEPT
+	sudo /sbin/iptables -I OUTPUT -p tcp --sport 143 -m state --state NEW,ESTABLISHED -j ACCEPT
 	sudo service iptables save
 
 	####################################################################
@@ -56,7 +66,9 @@ mailServer_com(){
 	####################################################################
 
 	sudo /sbin/chkconfig --add postfix
+	sudo /sbin/chkconfig --add dovecot
 	sudo /sbin/chkconfig postfix on
+	sudo /sbin/chkconfig dovecot on
 
 	####################################################################
 	# Postfix Configuration
@@ -101,5 +113,17 @@ mailServer_com(){
 	sudo /usr/bin/newaliases
 	echo -e "$cyan##### Aliases Added #####$endColor"
 	echo -e "$cyan=============== Mailserver created successfully ===============$endColor"
+	
+	####################################################################
+	# Dovecot Configuration
+	####################################################################
+	
+	if [ ! -f /etc/dovecot/dovecot.conf.orig ]; then
+		cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.orig
+	fi
+	
+	echo -e "$cyan##### Dovecot Configurated #####$endColor"
+
+	sudo /etc/init.d/dovecot start
 
 }
