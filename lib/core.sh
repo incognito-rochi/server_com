@@ -98,15 +98,15 @@ printMenu(){
 	echo -e "\t6) Configure and securitizing MySQL"
 	echo -e "\t7) Create SVN & TRAC repos"
 	echo -e "\t8) Create a Mail Server(postfix)"
-	echo -e "\t9) Create a Mail Server(postfix,dovecot,squerellmail)"
+	echo -e "\t9) Create a Mail Server(postfix,dovecot,roundcube)"
 	echo -e "\t10) Create a cron backup (mysql, apache, trac & svn)"
 	echo -e "\t11) Set DNS and to add Google Apps MX records (Only SliceHost.com)"
 	echo -e "\t12) Install Trac and its Plugins"
 	echo -e "\t13) Configure and securitizing Samba"
-	echo -e "\t14) I do not know, exit!"
-	#echo -e "\t15) Create VirtualHosts"
+	echo -e "\t14) Create VirtualHosts"
+	echo -e "\t15) I do not know, exit!"
 	read option;
-	while [[ $option -gt 14 || ! $(echo $option | grep '^[1-9]$') ]]
+	while [[ $option -gt 15 || ! $(echo $option | grep '^[1-9]$') ]]
 	do
 		printMenu
 	done
@@ -131,8 +131,8 @@ runOption(){
 		11) set_dns;;
 		12) InstallTrac;;
 		13) InstallSamba;;
-		14) exit
-#		15) CreateVirtualHosts;;
+		14) CreateVirtualHosts;;
+		15) exit;;
 	esac 
 	echo "Press any Key to continue"
 	read x

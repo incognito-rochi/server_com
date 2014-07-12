@@ -49,7 +49,7 @@ mailServer_com(){
 	####################################################################
 
 	yum install -y postfix
-	yum install -y dovecot dovecot-mysql
+	yum install -y dovecot dovecot-mysql dovecot-pigeonhole opendkim
 
 	####################################################################
 	# Adding iptables rules for postfix
@@ -69,6 +69,9 @@ mailServer_com(){
 	sudo /sbin/chkconfig --add dovecot
 	sudo /sbin/chkconfig postfix on
 	sudo /sbin/chkconfig dovecot on
+	chkconfig opendkim on
+	chkconfig exim off
+	
 
 	####################################################################
 	# Postfix Configuration
@@ -122,8 +125,98 @@ mailServer_com(){
 		cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.orig
 	fi
 	
+	rm -rf /etc/dovecot/dovecot.conf
+	cp -R $base_path/lib/conf-files/dovecot.conf /etc/dovecot/
+	read -e -p "Enter the FQDN of the server (example: yourdomain.com): " -i $fqdn fqdn
+	sed -i "s|postmaster_address = postmaster@your-domain.tld|postmaster_address = postmaster@$fqdn|" /etc/dovecot/dovecot.conf
+	
+	
 	echo -e "$cyan##### Dovecot Configurated #####$endColor"
+	echo -e "$cyan========= POP3 and IMEP conf created successfully ===========$endColor"
 
 	sudo /etc/init.d/dovecot start
+	
+	####################################################################
+	# RoundCube Installation
+	####################################################################
+	
+	updateInstall()
+	
+	echo -e "$cyan##### RoundCube Installation Started #####$endColor"
+	cd $basepath/lib/downloads/
+	
+	wget -P /var/www/html http://sourceforge.net/projects/roundcubemail/files/roundcubemail/0.8.5/roundcubemail-0.8.5.tar.gz/download#
+	tar -C /var/www/html -zxvf /var/www/html/roundcubemail-*.tar.gz
+	rm -f /var/www/html/roundcubemail-*.tar.gz 
+	mv /var/www/html/roundcubemail-* /var/www/html/roundcube 
+	chown root:root -R /var/www/html/roundcube
+	chown -R apache:apache /var/www/html/roundcubemail
+	chmod 777 -R /var/www/html/roundcube/temp/ 
+	chmod 777 -R /var/www/html/roundcube/logs/
 
+cat <<'EOF' > /etc/httpd/conf.d/20-roundcube.conf
+Alias /webmail /var/www/html/roundcube
+
+<Directory /var/www/html/roundcube>
+  Options -Indexes
+  AllowOverride All
+</Directory>
+
+<Directory /var/www/html/roundcube/config>
+  Order Deny,Allow
+  Deny from All
+</Directory>
+
+<Directory /var/www/html/roundcube/temp>
+  Order Deny,Allow
+  Deny from All
+</Directory>
+
+<Directory /var/www/html/roundcube/logs>
+  Order Deny,Allow
+  Deny from All
+</Directory>
+EOF
+
+sed -e "s|mypassword|${mysql_roundcube_password}|" <<'EOF' | mysql -u root -p$passwd
+USE mysql;
+CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
+GRANT USAGE ON * . * TO 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
+CREATE DATABASE IF NOT EXISTS `roundcube`;
+GRANT ALL PRIVILEGES ON `roundcube` . * TO 'roundcube'@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+mysql -u root -p$passwd roundcube < /var/www/html/roundcube/SQL/mysql.initial.sql
+
+cp /var/www/html/roundcube/config/main.inc.php.dist /var/www/html/roundcube/config/main.inc.php
+
+sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/html/roundcube/config/main.inc.php
+#sed -i "s|^\(\$rcmail_config\['support_url'\] =\).*$|\1 \'mailto:${E}\';|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['quota_zero_as_unlimited'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['preview_pane'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['read_when_deleted'\] =\).*$|\1 false;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['check_all_folders'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['display_next'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['top_posting'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['sig_above'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+sed -i "s|^\(\$rcmail_config\['login_lc'\] =\).*$|\1 2;|" /var/www/html/roundcube/config/main.inc.php
+
+cp /var/www/html/roundcube/config/db.inc.php.dist /var/www/html/roundcube/config/db.inc.php
+
+sed -i "s|^\(\$rcmail_config\['db_dsnw'\] =\).*$|\1 \'mysqli://roundcube:${mysql_roundcube_password}@localhost/roundcube\';|" /var/www/html/roundcube/config/db.inc.php
+
+rm -rf /var/www/html/roundcube/installer
+
+	echo -e "$cyan##### RoundCube Installation has completed successfully #####$endColor"
+
+	echo -e "$cyan##### HTTP Server Reloading #####$endColor"
+	service httpd reload
+	echo -e "$cyan##### HTTP Server Reloaded #####$endColor"
+	
+	
+	echo -e "$cyan========= Mail Server Installed successfully ===========$endColor"
 }
