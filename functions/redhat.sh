@@ -109,7 +109,83 @@ InstallTrac(){
 ####################################################################
 InstallSamba(){
 	echo -e "$cyan##### Samba Install #####$endColor"  
+	yum -y install samba samba-client samba-common
+	
+	mkdir -p /etc/samba/ccd             
+	chmod -R 0777 /etc/samba/ccd/
+	
+	if [ ! -f /etc/samba/smb.conf.orig ]; then
+		cp /etc/samba/smb.conf /etc/samba/smb.conf.orig
+	fi
+	
+	rm -rf /etc/samba/smb.conf
+	
+cat <<'EOF' > /etc/samba/smb.conf
+[global]
+unix charset = UTF-8
+dos charset = CP932
+workgroup = DOCS 
+netbios name = DOCS_SRV 
+security = share 
+printcap name = cups 
+disable spools= Yes 
+show add printer wizard = No 
+printing = cups  
 
+[printers] 
+comment = All Printers 
+path = /var/spool/samba 
+guest ok = Yes 
+printable = Yes 
+use client driver = Yes 
+browseable = Yes
+
+	hosts allow = 127. 192.168.12. 192.168.13. 192.168.0.
+	
+	
+	# Max Log Size let you specify the max size log files should reach
+	
+	# logs split per machine
+	log file = /var/log/samba/log.%m
+	# max 50KB per log file, then rotate
+	max log size = 50
+	
+	
+	# A publicly accessible directory, but read only, except for people in
+	# the "staff" group
+	[office]
+	comment = Public Stuff
+	path = /etc/samba/ccd/
+	browsable = yes
+	writable = yes
+	guest ok = no
+	create mode = 0775
+	directory mode = 0775
+
+EOF
+
+
+	rpm -qa | grep samba
+	chkconfig smb on
+	chkconfig smb --list
+	chkconfig nmb on
+	chkconfig nmb --list
+	
+	
+	service smb restart
+	service nmb restart
+
+	#test samba configuration
+	testparm       
+
+#########firewall & iptables#########
+
+	iptables -I INPUT -p tcp -m tcp --dport 137 -j ACCEPT
+	iptables -I INPUT -p udp -m udp --dport 138 -j ACCEPT
+	iptables -I INPUT -p udp -m udp --dport 139 -j ACCEPT
+	iptables -I INPUT -p tcp -m tcp --dport 445 -j ACCEPT
+	service iptables save
+	service iptables restart
 }
 
 ####################################################################
