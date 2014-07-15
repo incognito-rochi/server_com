@@ -36,14 +36,13 @@ Install easily a secure web server on linux. You can choose what you want to ins
  1. Download the project and extract the project
 
  ```sh
- curl -LOk https://github.com/coto/server-easy-install/archive/0.3.tar.gz
- tar -xvf 0.3.tar.gz
+ git clone https://github.com/incognito-rochi/server_com.git
  ```
 
- 1. Create a config file and run the Bash
+ 2. Create a config file and run the Bash
 
  ```
- cd server-easy-install-0.3/
+ cd server_com/
  cp config.sample config
  bash install.sh
  ```
