@@ -2,12 +2,12 @@ server_com
 ==========
  
 - Edited By   : Raisul Islam
-- Last Updated: July 2th, 2014
+- Last Updated: July 15th, 2014
 
 ## Description
 Install easily a secure web server on linux. You can choose what you want to install between a lot of packages.
 
-**Fast and Easy Web Server Installation** is a Bash Script project that help you to install and configure a Cross-Linux server with insteresting packages and funtionalities, like Wordpress, MySQL, TRAC, and many more.
+**Server Com** is a Bash Script project that help you to install and configure a Cross-Linux server with insteresting packages and funtionalities, like Wordpress, MySQL, TRAC, and many more.
 
 ### List of packages availables to install and configure:
 
@@ -24,7 +24,7 @@ Install easily a secure web server on linux. You can choose what you want to ins
  * Virtualhost
 
 ### Tested
-**Fast and Easy Web Server Installation** was tested on next Linux Operating System
+**Server Com** was tested on next Linux Operating System
  
  * CentOS
  * Red Hat Enterprise Linux 
