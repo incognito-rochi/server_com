@@ -126,7 +126,7 @@ mailServer_com(){
 	
 	rm -rf /etc/dovecot/dovecot.conf
 	cp -R $base_path/lib/conf-files/dovecot.conf /etc/dovecot/
-	read -e -p "Enter the FQDN of the server (example: yourdomain.com): " -i $fqdn fqdn
+	read -e -p "Enter the FQDN of the server (example: yourdomain.com): " -i $fqdn 
 	sed -i "s|postmaster_address = postmaster@your-domain.tld|postmaster_address = postmaster@$fqdn|" /etc/dovecot/dovecot.conf
 	
 	
