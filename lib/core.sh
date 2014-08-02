@@ -106,7 +106,7 @@ printMenu(){
 	echo -e "\t14) Create VirtualHosts"
 	echo -e "\t15) I do not know, exit!"
 	read option;
-	while [[ $option -gt 15 || ! $(echo $option | grep '^[1-9]$') ]]
+	while [[ $option -gt 15 || ! $(echo $option | grep '^[1-9][0-9]') ]]
 	do
 		printMenu
 	done

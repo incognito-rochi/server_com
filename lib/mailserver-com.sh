@@ -153,40 +153,40 @@ mailServer_com(){
 	chmod 777 -R /var/www/html/roundcube/temp/ 
 	chmod 777 -R /var/www/html/roundcube/logs/
 
-cat <<'EOF' > /etc/httpd/conf.d/20-roundcube.conf
-Alias /webmail /var/www/html/roundcube
+#cat <<EOF  /etc/httpd/conf.d/20-roundcube.conf
+#Alias /webmail /var/www/html/roundcube
 
-<Directory /var/www/html/roundcube>
-Options -Indexes
-AllowOverride All
-</Directory>
+#<Directory /var/www/html/roundcube>
+#Options -Indexes
+#AllowOverride All
+#</Directory>
 
-<Directory /var/www/html/roundcube/config>
-Order Deny,Allow
-Deny from All
-</Directory>
+#<Directory /var/www/html/roundcube/config>
+#Order Deny,Allow
+#Deny from All
+#</Directory>
 
-<Directory /var/www/html/roundcube/temp>
-Order Deny,Allow
-Deny from All
-</Directory>
+#<Directory /var/www/html/roundcube/temp>
+#Order Deny,Allow
+#Deny from All
+#</Directory>
 
-<Directory /var/www/html/roundcube/logs>
-Order Deny,Allow
-Deny from All
-</Directory>
-EOF
+#<Directory /var/www/html/roundcube/logs>
+#Order Deny,Allow
+#Deny from All
+#</Directory>
+#EOF
 	
-sed -e "s|mypassword|${mysql_roundcube_password}|" <<'EOF' > | mysql -u root -p$passwd
-USE mysql;
-CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
-GRANT USAGE ON * . * TO 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
-CREATE DATABASE IF NOT EXISTS `roundcube`;
-GRANT ALL PRIVILEGES ON `roundcube` . * TO 'roundcube'@'localhost';
-FLUSH PRIVILEGES;
-EOF
+#sed -e "s|mypassword|${mysql_roundcube_password}|" <<EOF | mysql -u root -p$passwd
+#USE mysql;
+#CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
+#GRANT USAGE ON * . * TO 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
+#CREATE DATABASE IF NOT EXISTS `roundcube`;
+#GRANT ALL PRIVILEGES ON `roundcube` . * TO 'roundcube'@'localhost';
+#FLUSH PRIVILEGES;
+#EOF
 
-	mysql -u root -p$passwd roundcube < /var/www/html/roundcube/SQL/mysql.initial.sql
+#	mysql -u root -p$passwd roundcube < /var/www/html/roundcube/SQL/mysql.initial.sql
 
 	cp /var/www/html/roundcube/config/main.inc.php.dist /var/www/html/roundcube/config/main.inc.php
 
@@ -218,4 +218,5 @@ EOF
 	
 	
 	echo -e "$cyan========= Mail Server Installed successfully ===========$endColor"
+	
 }
