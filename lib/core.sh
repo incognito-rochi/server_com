@@ -90,23 +90,23 @@ printMenu(){
 	clear
 	echo -e "$cyan Fast and Easy Web Server Installation $endColor"
 	echo "Choose an option writing its number and press enter:"
-	echo -e "\t1) Create a user"
-	echo -e "\t2) Create users profile (color in bash)"
-	echo -e "\t3) Update and Install (Apache, PHP, MySQL,SQLite, Django,Subversion,git)"
-	echo -e "\t4) Configurating SSH and IPTABLES"
-	echo -e "\t5) Configure and securitizing Apache"
-	echo -e "\t6) Configure and securitizing MySQL"
-	echo -e "\t7) Create SVN & TRAC repos"
-	echo -e "\t8) Create a Mail Server(postfix)"
-	echo -e "\t9) Create a Mail Server(postfix,dovecot,roundcube)"
-	echo -e "\t10) Create a cron backup (mysql, apache, trac & svn)"
-	echo -e "\t11) Set DNS and to add Google Apps MX records (Only SliceHost.com)"
-	echo -e "\t12) Install Trac and its Plugins"
-	echo -e "\t13) Configure and securitizing Samba"
-	echo -e "\t14) Create VirtualHosts"
-	echo -e "\t15) I do not know, exit!"
+	echo -e "\t11) Create a user"
+	echo -e "\t12) Create users profile(color in bash)"
+	echo -e "\t13) Update and Install(Apache,PHP,MySQL,SQLite,Django,Subversion,git)"
+	echo -e "\t14) Configurating SSH and IPTABLES"
+	echo -e "\t15) Configure and securitizing Apache"
+	echo -e "\t16) Configure and securitizing MySQL"
+	echo -e "\t17) Create SVN & TRAC repos"
+	echo -e "\t18) Create a Mail Server(postfix)"
+	echo -e "\t19) Create a Mail Server(postfix,dovecot,roundcube)"
+	echo -e "\t20) Create a cron backup (mysql, apache, trac & svn)"
+	echo -e "\t21) Set DNS and to add Google Apps MX records (Only SliceHost.com)"
+	echo -e "\t22) Install Trac and its Plugins"
+	echo -e "\t23) Configure and securitizing Samba"
+	echo -e "\t24) Create VirtualHosts"
+	echo -e "\t25) I do not know, exit!"
 	read option;
-	while [[ $option -gt 15 || ! $(echo $option | grep '^[1-9][0-9]') ]]
+	while [[ $option -gt 25 || ! $(echo $option | grep '^[1-9][0-9]') ]]
 	do
 		printMenu
 	done
@@ -118,21 +118,21 @@ printMenu(){
 ####################################################################
 runOption(){
 	case $option in
-		1) createUser;;
-		2) profileUser;;
-		3) updateInstall;;
-		4) sshIptables;;
-		5) secureApache;;
-		6) secureMySQL;;
-		7) tracsvn;;
-		8) mailServer;;
-		9) mailServer_com;;
-		10) cronBackup;;
-		11) set_dns;;
-		12) InstallTrac;;
-		13) InstallSamba;;
-		14) CreateVirtualHosts;;
-		15) exit;;
+		11) createUser;;
+		12) profileUser;;
+		13) updateInstall;;
+		14) sshIptables;;
+		15) secureApache;;
+		16) secureMySQL;;
+		17) tracsvn;;
+		18) mailServer;;
+		19) mailServer_com;;
+		20) cronBackup;;
+		21) set_dns;;
+		22) InstallTrac;;
+		23) InstallSamba;;
+		24) CreateVirtualHosts;;
+		25) exit;;
 	esac 
 	echo "Press any Key to continue"
 	read x
