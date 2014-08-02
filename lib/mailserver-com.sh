@@ -70,7 +70,6 @@ mailServer_com(){
 	sudo /sbin/chkconfig postfix on
 	sudo /sbin/chkconfig dovecot on
 	chkconfig opendkim on
-	chkconfig exim off
 	
 
 	####################################################################
@@ -158,27 +157,27 @@ cat <<'EOF' > /etc/httpd/conf.d/20-roundcube.conf
 Alias /webmail /var/www/html/roundcube
 
 <Directory /var/www/html/roundcube>
-  Options -Indexes
-  AllowOverride All
+Options -Indexes
+AllowOverride All
 </Directory>
 
 <Directory /var/www/html/roundcube/config>
-  Order Deny,Allow
-  Deny from All
+Order Deny,Allow
+Deny from All
 </Directory>
 
 <Directory /var/www/html/roundcube/temp>
-  Order Deny,Allow
-  Deny from All
+Order Deny,Allow
+Deny from All
 </Directory>
 
 <Directory /var/www/html/roundcube/logs>
-  Order Deny,Allow
-  Deny from All
+Order Deny,Allow
+Deny from All
 </Directory>
 EOF
-
-sed -e "s|mypassword|${mysql_roundcube_password}|" <<'EOF' | mysql -u root -p$passwd
+	
+sed -e "s|mypassword|${mysql_roundcube_password}|" <<'EOF' > | mysql -u root -p$passwd
 USE mysql;
 CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
 GRANT USAGE ON * . * TO 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
@@ -187,29 +186,29 @@ GRANT ALL PRIVILEGES ON `roundcube` . * TO 'roundcube'@'localhost';
 FLUSH PRIVILEGES;
 EOF
 
-mysql -u root -p$passwd roundcube < /var/www/html/roundcube/SQL/mysql.initial.sql
+	mysql -u root -p$passwd roundcube < /var/www/html/roundcube/SQL/mysql.initial.sql
 
-cp /var/www/html/roundcube/config/main.inc.php.dist /var/www/html/roundcube/config/main.inc.php
+	cp /var/www/html/roundcube/config/main.inc.php.dist /var/www/html/roundcube/config/main.inc.php
 
-sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/html/roundcube/config/main.inc.php
-#sed -i "s|^\(\$rcmail_config\['support_url'\] =\).*$|\1 \'mailto:${E}\';|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['quota_zero_as_unlimited'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['preview_pane'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['read_when_deleted'\] =\).*$|\1 false;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['check_all_folders'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['display_next'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['top_posting'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['sig_above'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
-sed -i "s|^\(\$rcmail_config\['login_lc'\] =\).*$|\1 2;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['default_host'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['smtp_server'\] =\).*$|\1 \'localhost\';|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['smtp_user'\] =\).*$|\1 \'%u\';|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['smtp_pass'\] =\).*$|\1 \'%p\';|" /var/www/html/roundcube/config/main.inc.php
+	#sed -i "s|^\(\$rcmail_config\['support_url'\] =\).*$|\1 \'mailto:${E}\';|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['quota_zero_as_unlimited'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['preview_pane'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['read_when_deleted'\] =\).*$|\1 false;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['check_all_folders'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['display_next'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['top_posting'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['sig_above'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['login_lc'\] =\).*$|\1 2;|" /var/www/html/roundcube/config/main.inc.php
 
-cp /var/www/html/roundcube/config/db.inc.php.dist /var/www/html/roundcube/config/db.inc.php
+	cp /var/www/html/roundcube/config/db.inc.php.dist /var/www/html/roundcube/config/db.inc.php
 
-sed -i "s|^\(\$rcmail_config\['db_dsnw'\] =\).*$|\1 \'mysqli://roundcube:${mysql_roundcube_password}@localhost/roundcube\';|" /var/www/html/roundcube/config/db.inc.php
+	sed -i "s|^\(\$rcmail_config\['db_dsnw'\] =\).*$|\1 \'mysqli://roundcube:${mysql_roundcube_password}@localhost/roundcube\';|" /var/www/html/roundcube/config/db.inc.php
 
-rm -rf /var/www/html/roundcube/installer
+	rm -rf /var/www/html/roundcube/installer
 
 	echo -e "$cyan##### RoundCube Installation has completed successfully #####$endColor"
 
