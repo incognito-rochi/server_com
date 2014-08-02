@@ -142,18 +142,17 @@ mailServer_com(){
 	updateInstall
 	
 	echo -e "$cyan##### RoundCube Installation Started #####$endColor"
-	cd $basepath/lib/downloads/
 	
-	wget -P /var/www/html http://sourceforge.net/projects/roundcubemail/files/roundcubemail/0.8.5/roundcubemail-0.8.5.tar.gz/download#
+	wget -P /var/www/html http://sourceforge.net/projects/roundcubemail/files/roundcubemail/1.0.2/roundcubemail-1.0.2.tar.gz
 	tar -C /var/www/html -zxvf /var/www/html/roundcubemail-*.tar.gz
-	rm -f /var/www/html/roundcubemail-*.tar.gz 
+	rm -rf /var/www/html/roundcubemail-*.tar.gz 
 	mv /var/www/html/roundcubemail-* /var/www/html/roundcube 
 	chown root:root -R /var/www/html/roundcube
-	chown -R apache:apache /var/www/html/roundcubemail
+	chown -R apache:apache /var/www/html/roundcube
 	chmod 777 -R /var/www/html/roundcube/temp/ 
 	chmod 777 -R /var/www/html/roundcube/logs/
 
-cat <<EOF  /etc/httpd/conf.d/20-roundcube.conf
+cat <<EOF >  /etc/httpd/conf.d/20-roundcube.conf
 Alias /webmail /var/www/html/roundcube
 
 <Directory /var/www/html/roundcube>
@@ -177,7 +176,7 @@ Deny from All
 </Directory>
 EOF
 	
-sed -e "s|mypassword|${mysql_roundcube_password}|" <<EOF | mysql -u root -p$passwd
+sed -e "s|mypassword|${mysql_roundcube_password}|" <<EOF > | mysql -u root -p$passwd
 USE mysql;
 CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
 GRANT USAGE ON * . * TO 'roundcube'@'localhost' IDENTIFIED BY 'mypassword';
@@ -203,6 +202,8 @@ EOF
 	sed -i "s|^\(\$rcmail_config\['top_posting'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
 	sed -i "s|^\(\$rcmail_config\['sig_above'\] =\).*$|\1 true;|" /var/www/html/roundcube/config/main.inc.php
 	sed -i "s|^\(\$rcmail_config\['login_lc'\] =\).*$|\1 2;|" /var/www/html/roundcube/config/main.inc.php
+	sed -i "s|^\(\$rcmail_config\['product_name'\] =\).*$|\1 \'DSLab Webmail\';|" /var/www/html/roundcube/config/main.inc.php
+
 
 	cp /var/www/html/roundcube/config/db.inc.php.dist /var/www/html/roundcube/config/db.inc.php
 

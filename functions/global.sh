@@ -10,8 +10,8 @@ sshIptables(){
 	fi
 	echo -e "$cyan##### SSH: Add Port $port #####$endColor"
 	sed "/^#Port 22.*/ s/^#Port 22/Port $port/" /etc/ssh/sshd_config > tmp
-	cat tmp > /etc/ssh/sshd_config
-	sed '/^#PermitRootLogin yes.*/ s/^#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config > tmp
+	#cat tmp > /etc/ssh/sshd_config
+	#sed '/^#PermitRootLogin yes.*/ s/^#PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config > tmp
 	cat tmp > /etc/ssh/sshd_config
 	sed '/^#X11Forwarding no.*/ s/^#//' /etc/ssh/sshd_config > tmp
 	cat tmp > /etc/ssh/sshd_config

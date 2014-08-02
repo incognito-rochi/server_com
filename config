@@ -20,15 +20,15 @@ port='22'
 ####################################################################
 # Admin's email
 ####################################################################
-mailAdmin='user@domain.tld'
+mailAdmin='user@dslab.tld'
 
 ####################################################################
 # Mailserver
 ####################################################################
-nameSlice="sliceName"
-ipServer='xxx.xxx.xxx.xxx'
-gateway='xxx.xxx.xxx.1'
-mydomain='domain.tld'
+nameSlice="dslab"
+ipServer='127.0.0.1'
+gateway='127.0.0.1'
+mydomain='dslab.tld'
 # note: some times gateway is same to ipServer, but with last number .1
 
 ####################################################################
