@@ -2,7 +2,7 @@ server_com
 ==========
  
 - Edited By   : Raisul Islam
-- Last Updated: July 15th, 2014
+- Last Updated: August 02th, 2014
 
 ## Description
 Install easily a secure web server on linux. You can choose what you want to install between a lot of packages.
